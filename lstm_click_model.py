@@ -14,7 +14,6 @@ from keras.layers import LSTM
 from keras.layers import TimeDistributed
 from keras.layers import Masking
 import numpy as np
-from sklearn import metrics
 
 # feature dimention, time steps, ect
 data_dim = 26
