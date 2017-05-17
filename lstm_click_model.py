@@ -1,8 +1,10 @@
 """ LSTM-based click model
     
-    The idea is to model the process of ad ranking as a sequence generating process. At each step, the model is used to predict the click through rate of the candidate ad accoding to its own quanlity and the ads selected at previous steps.
+    The idea is to model the process of ad ranking as a sequence generating process. At each step, the model is used to predict
+    the click through rate of the candidate ad accoding to its own quanlity and the ads selected at previous steps.
 
-    LSTM model is build using the open-sourced API keras. Keras is a high-level API based on tensorflow and and theano. It is a good tool for rapid prototyping 
+    LSTM model is build using the open-sourced API keras. Keras is a high-level API based on tensorflow and and theano. It is a
+    good tool for rapid prototyping 
 """
 
 from keras.models import Sequential,load_model
@@ -23,7 +25,7 @@ train_epoch = 15
 
 # calculate auc
 def AUC(label, pred):
-    pv_num = len(pred)
+    total_num = len(pred)
     click_num = 0.0
     area_num = 0.0
     list_eval = zip(label, pred)
@@ -32,13 +34,13 @@ def AUC(label, pred):
         area_num += click_num * (1 - list_eval[i][0])
         click_num += list_eval[i][0]
     auc = 0.0
-    if pv_num == click_num:
+    if total_num == click_num:
         auc = 1
     elif click_num == 0:
         auc = 0
     else:
-        auc = area_num / (pv_num - click_num) / click_num
-    return (pv_num, click_num, auc)
+        auc = area_num / (total_num - click_num) / click_num
+    return (total_num, click_num, auc)
 
 
 def load_data(mode, file_prefix):
@@ -63,8 +65,9 @@ def load_data(mode, file_prefix):
 
 #####################################################################
 #### get context-free click through rate from feature vector   ######
-#### context-free click through rate is predicted by only considering 
-#### the information of user requirement and the single ad.    ######
+#### context-free click through rate is predicted considering  ######
+#### only the user requirement and the single ad. It is used   ######
+#### as one feature of LSTM based click model                  ######
 #####################################################################
 def get_ctr(x_test):
     ctr = []
@@ -74,6 +77,9 @@ def get_ctr(x_test):
 
     return np.asarray(ctr)
 
+#####################################################################
+#### define the model: layers, output, loss, optimizer, metric ######
+#####################################################################
 def build_model():
     model = Sequential()
     model.add(LSTM(32, return_sequences=True, input_shape=(timesteps, data_dim)))
@@ -87,11 +93,10 @@ def build_model():
 
 def train_model(model):
     file_prefix_list = []
+    #  here add code for initiate file_prefix_list
+    #
+    #
     
-    ###########################################
-    ##  code for read the training file list ##
-    ###########################################
-
     for j in range(0, train_epoch):
         # train the model with data from all the training file
         for i in range(0, len(file_prefix_list)):
@@ -108,15 +113,13 @@ def save_model(model):
 
 def evaluate_model(model):
     test_file = ""
-
-    ############################################
-    ##       code for initiate test_file      ##
-    ############################################
-
+    # here add code for initiate test_file
+    
+    # load test data
     (x_test, y_test) = load_data("test", test_file)
-
+    # predict
     preds = model.predict(x_test, batch_size=batchsize, verbose=0)
-
+    # extract reference ctr
     ctr_base = get_ctr(x_test) 
 
     # evaluate with auc
