@@ -69,7 +69,7 @@ def load_data(mode, file_prefix):
 #### get context-free click through rate from feature vector   ######
 #### context-free click through rate is predicted considering  ######
 #### only the user requirement and the single ad. It is used   ######
-#### as one feature of LSTM based click model                  ######
+#### as a feature for LSTM based click model                   ######
 #####################################################################
 def get_ctr(x_test):
     ctr = []
@@ -127,7 +127,7 @@ def evaluate_model(model):
     (x_test, y_test) = load_data("test", test_file)
     # predict
     preds = model.predict(x_test, batch_size=batchsize, verbose=0)
-    # extract reference ctr
+    # extract reference ctr from the test data
     ctr_base = get_ctr(x_test) 
 
     # evaluate with auc
