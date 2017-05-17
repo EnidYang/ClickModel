@@ -23,7 +23,9 @@ num_classes = 2
 batchsize = 1000
 train_epoch = 15
 
-# calculate auc
+#####################################################################
+########### auc metric: evaluate the LSTM based click mode  #########
+#####################################################################
 def AUC(label, pred):
     total_num = len(pred)
     click_num = 0.0
@@ -90,11 +92,12 @@ def build_model():
               metrics=['accuracy'])
     return model
 
-
+#####################################################################
+############################# training process: #####################
+#####################################################################
 def train_model(model):
     file_prefix_list = []
     #  here add code for initiate file_prefix_list
-    #
     #
     
     for j in range(0, train_epoch):
@@ -105,12 +108,17 @@ def train_model(model):
             model.fit(x_train, y_train, nb_epoch=1, batch_size=batchsize)
             del x_train, y_train
 
-
+#####################################################################
+######################### save the model to file ####################
+#####################################################################
 def save_model(model):
     model.summary()
     model.save("./lstm_model")
     model.save_weights('./lstm_model_weights')
 
+#####################################################################
+############################# test and evaluate #####################
+#####################################################################
 def evaluate_model(model):
     test_file = ""
     # here add code for initiate test_file
@@ -128,6 +136,9 @@ def evaluate_model(model):
     print "Old AUC:"
     print AUC(y_test, ctr_base)    
 
+#####################################################################
+############################## main procedure #######################
+#####################################################################
 def main():
     model = build_model()
     print "model built!"
